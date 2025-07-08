@@ -46,7 +46,23 @@
 
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: true });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: false });
+            
+            // Find all code blocks with language 'mermaid'
+            const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid');
+            mermaidBlocks.forEach((block, index) => {
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                mermaidDiv.textContent = block.textContent;
+                mermaidDiv.id = 'mermaid-' + index;
+                
+                block.parentNode.parentNode.replaceChild(mermaidDiv, block.parentNode);
+            });
+            
+            mermaid.run();
+        });
     </script>
 </body>
 </html>
