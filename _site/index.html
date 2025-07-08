@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Your Blog Title</title>
+    <meta name="description" content="A minimalistic Jekyll blog">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+        }
+        header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+        h1 { color: #2c3e50; }
+        h2 { color: #34495e; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .post-meta { color: #666; font-size: 0.9em; }
+        .post-list { list-style: none; padding: 0; }
+        .post-list li { margin-bottom: 20px; }
+        footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #666; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="/">Your Blog Title</a></h1>
+        <p>A minimalistic Jekyll blog</p>
+    </header>
+
+    <main>
+        <h2>Welcome to My Blog</h2>
+<p>This is a minimalistic Jekyll blog. Below are my latest posts:</p>
+
+<ul class="post-list">
+  
+    <li>
+      <h3><a href="/2025/07/08/welcome-to-jekyll/">Welcome to Jekyll!</a></h3>
+      <p class="post-meta">July 08, 2025</p>
+      <p><p>Welcome to your new Jekyll blog! This is your first blog post.</p>
+</p>
+    </li>
+  
+    <li>
+      <h3><a href="/2025/07/08/mermaid-diagrams/">Mermaid Diagrams Support</a></h3>
+      <p class="post-meta">July 08, 2025</p>
+      <p><h1 id="mermaid-diagrams-support">Mermaid Diagrams Support</h1>
+</p>
+    </li>
+  
+    <li>
+      <h3><a href="/2025/07/08/ai/">AI Everywhere</a></h3>
+      <p class="post-meta">July 08, 2025</p>
+      <p><p>AI craze these days. It’s simultaneously exciting while alarming.
+The most intriguing part is whether and how it will replace human beings.
+But first of all, is it even an issue if it replaces humans? Many like to speak of this as if immediately accepting that it’s a problem. But is it?</p>
+</p>
+    </li>
+  
+</ul>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Your Blog Title. Powered by Jekyll.</p>
+    </footer>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: false });
+            
+            // Find all code blocks with language 'mermaid'
+            const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid');
+            mermaidBlocks.forEach((block, index) => {
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                mermaidDiv.textContent = block.textContent;
+                mermaidDiv.id = 'mermaid-' + index;
+                
+                block.parentNode.parentNode.replaceChild(mermaidDiv, block.parentNode);
+            });
+            
+            mermaid.run();
+        });
+    </script>
+</body>
+</html>
