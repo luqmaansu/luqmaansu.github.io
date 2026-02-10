@@ -1,8 +1,8 @@
 ---
-layout: post
+layout: base.njk
 title: "Welcome to Jekyll!"
 date: 2025-07-08
-categories: jekyll update
+permalink: /blog/welcome-to-jekyll/
 ---
 
 Welcome to your new Jekyll blog! This is your first blog post.

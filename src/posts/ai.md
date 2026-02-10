@@ -1,8 +1,8 @@
 ---
-layout: post
+layout: base.njk
 title: "AI Everywhere"
 date: 2025-07-08
-categories: ai
+permalink: /blog/ai/
 ---
 
 AI craze these days. It's simultaneously exciting while alarming.

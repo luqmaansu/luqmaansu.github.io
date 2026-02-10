@@ -1,0 +1,16 @@
+---
+layout: base.njk
+title: Home
+---
+
+<h2 class="page-heading"><span class="prompt">></span> posts</h2>
+
+<div class="post-grid">
+    {%- for post in collections.posts %}
+    <a href="{{ post.url }}" class="post-card">
+        <div class="post-card-title"><span class="prompt">></span> {{ post.data.title }}</div>
+        <div class="post-card-date">{{ post.data.date | shortDate }}</div>
+        <div class="post-card-excerpt">{{ post.content | excerpt }}</div>
+    </a>
+    {%- endfor %}
+</div>

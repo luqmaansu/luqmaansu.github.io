@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} | {% endif %}{{ metadata.title }}</title>
+    <meta name="description" content="{% if excerpt %}{{ excerpt }}{% else %}{{ metadata.description }}{% endif %}">
+    <link rel="alternate" type="application/atom+xml" title="{{ metadata.title }}" href="/feed.xml">
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.className = theme;
+        })();
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+
+        :root {
+            --bg: #f5f5f0;
+            --bg-card: #eaeae5;
+            --text: #3a3a3a;
+            --text-muted: #7a7a7a;
+            --text-heading: #1a1a1a;
+            --border: #d0d0c8;
+            --hover-bg: #e0e0d8;
+        }
+
+        .dark {
+            --bg: #2d2d2d;
+            --bg-card: #353535;
+            --text: #c8c8c8;
+            --text-muted: #808080;
+            --text-heading: #e8e8e8;
+            --border: #444;
+            --hover-bg: #3d3d3d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--bg);
+            transition: background-color 0.2s ease, color 0.2s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Header */
+        header {
+            margin-bottom: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .site-title {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-heading);
+            text-decoration: none;
+        }
+
+        .site-title:hover {
+            opacity: 0.7;
+        }
+
+        .site-title .prompt {
+            color: var(--text-muted);
+            margin-right: 4px;
+        }
+
+        .site-title .cursor {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            width: 36px;
+            height: 20px;
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.2s ease;
+            opacity: 0.5;
+        }
+
+        .theme-toggle:hover {
+            opacity: 1;
+            border-color: var(--text-muted);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 12px;
+            height: 12px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .dark .theme-toggle::before {
+            transform: translateX(14px);
+        }
+
+        /* Navigation */
+        nav {
+            margin-bottom: 48px;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85em;
+            margin-right: 20px;
+        }
+
+        nav a:hover {
+            color: var(--text-heading);
+        }
+
+        /* Main content */
+        main {
+            min-height: 50vh;
+        }
+
+        /* Post content */
+        .post-content h1,
+        .post-content h2,
+        .post-content h3 {
+            color: var(--text-heading);
+            margin-top: 2em;
+            margin-bottom: 0.5em;
+            font-weight: 500;
+        }
+
+        .post-content h1 { font-size: 1.4em; }
+        .post-content h2 { font-size: 1.15em; }
+        .post-content h3 { font-size: 1em; }
+
+        .post-content p {
+            margin-bottom: 1.2em;
+        }
+
+        .post-content a {
+            color: var(--text-heading);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-color: var(--text-muted);
+        }
+
+        .post-content a:hover {
+            text-decoration-color: var(--text-heading);
+        }
+
+        .post-content ul, .post-content ol {
+            margin-bottom: 1.2em;
+            padding-left: 1.5em;
+        }
+
+        .post-content li {
+            margin-bottom: 0.3em;
+        }
+
+        .post-content pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 1.2em;
+            font-size: 0.9em;
+        }
+
+        .post-content code {
+            font-family: inherit;
+            font-size: 0.95em;
+        }
+
+        .post-content p code {
+            background: var(--bg-card);
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid var(--border);
+        }
+
+        .post-content blockquote {
+            border-left: 2px solid var(--border);
+            padding-left: 16px;
+            color: var(--text-muted);
+            margin-bottom: 1.2em;
+        }
+
+        /* Post header */
+        .post-header {
+            margin-bottom: 40px;
+        }
+
+        .post-title {
+            font-size: 1.4em;
+            font-weight: 500;
+            color: var(--text-heading);
+            margin-bottom: 8px;
+        }
+
+        .post-date {
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        /* Post grid (homepage) */
+        .post-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .post-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            padding: 24px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .post-card:hover {
+            background: var(--hover-bg);
+            border-color: var(--text-muted);
+        }
+
+        .post-card-title {
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--text-heading);
+            margin-bottom: 6px;
+        }
+
+        .post-card-title .prompt {
+            color: var(--text-muted);
+        }
+
+        .post-card-date {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .post-card-excerpt {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Page heading */
+        .page-heading {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-heading);
+            margin-bottom: 32px;
+        }
+
+        .page-heading .prompt {
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 80px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8em;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 16px;
+            }
+
+            header {
+                margin-bottom: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="site-title">
+                <span class="prompt">></span> {{ metadata.title }}<span class="cursor">_</span>
+            </a>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode"></button>
+        </header>
+
+        <main>
+            {% if permalink and permalink.startsWith("/blog/") %}
+            <article>
+                <div class="post-header">
+                    <h1 class="post-title">{{ title }}</h1>
+                    <time class="post-date" datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
+                </div>
+                <div class="post-content">
+                    {{ content | safe }}
+                </div>
+            </article>
+            {% else %}
+            {{ content | safe }}
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>&copy; {{ metadata.title }}</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.className === 'dark' ? 'light' : 'dark';
+            html.className = newTheme;
+            localStorage.setItem('theme', newTheme);
+        }
+    </script>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+        const theme = document.documentElement.className;
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: theme === 'dark' ? 'dark' : 'default'
+        });
+
+        const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid');
+        mermaidBlocks.forEach((block, index) => {
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid';
+            mermaidDiv.textContent = block.textContent;
+            mermaidDiv.id = 'mermaid-diagram-' + index;
+            block.parentNode.parentNode.replaceChild(mermaidDiv, block.parentNode);
+        });
+
+        if (mermaidBlocks.length > 0) {
+            mermaid.run();
+        }
+    </script>
+</body>
+</html>
