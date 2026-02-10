@@ -8,9 +8,17 @@ title: Home
 <div class="post-grid">
     {%- for post in collections.posts %}
     <a href="{{ post.url }}" class="post-card">
-        <div class="post-card-title"><span class="prompt">></span> {{ post.data.title }}</div>
-        <div class="post-card-meta"><span class="post-card-date">{{ post.data.date | date }}</span>{%- for tag in post.data.tags %}{% if tag != "posts" %} <span class="tag-pill">{{ tag }}</span>{% endif %}{%- endfor %}</div>
-        <div class="post-card-excerpt">{{ post.content | excerpt }}</div>
+        <div class="post-card-thumb">
+            {%- if post.data.image %}
+            <img src="{{ post.data.image }}" alt="{{ post.data.title }}">
+            {%- else %}
+            <div class="post-card-placeholder" data-initial="{{ post.data.title | first | upper }}"></div>
+            {%- endif %}
+        </div>
+        <div class="post-card-body">
+            <div class="post-card-title">{{ post.data.title }}</div>
+            <div class="post-card-meta"><span class="post-card-date">{{ post.data.date | date }}</span>{%- for tag in post.data.tags %}{% if tag != "posts" %} <span class="tag-pill">{{ tag }}</span>{% endif %}{%- endfor %}</div>
+        </div>
     </a>
     {%- endfor %}
 </div>

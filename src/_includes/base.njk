@@ -53,7 +53,7 @@
         }
 
         .container {
-            max-width: 720px;
+            max-width: 860px;
             margin: 0 auto;
             padding: 60px 24px;
         }
@@ -223,29 +223,75 @@
         /* Post grid (homepage) */
         .post-grid {
             display: grid;
-            gap: 16px;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid var(--border);
+            border-left: 1px solid var(--border);
         }
 
         .post-card {
-            display: block;
+            display: flex;
+            flex-direction: column;
             text-decoration: none;
             color: inherit;
-            padding: 24px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            transition: none;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            overflow: hidden;
         }
 
         .post-card:hover {
             background-color: var(--hover-bg);
-            border-color: var(--text-muted);
+        }
+
+        .post-card-thumb {
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+        }
+
+        .post-card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .post-card-placeholder {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .post-card-placeholder::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(var(--border) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+        }
+
+        .post-card-placeholder::after {
+            content: attr(data-initial);
+            font-size: 3.5em;
+            font-weight: 300;
+            color: var(--text-muted);
+            opacity: 0.35;
+            position: relative;
+        }
+
+        .post-card-body {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
         }
 
         .post-card-title {
-            font-size: 1em;
+            font-size: 0.85em;
             font-weight: 500;
             color: var(--text-heading);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .post-card-title .prompt {
@@ -257,18 +303,15 @@
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 10px;
         }
 
         .post-card-date {
-            font-size: 0.8em;
+            font-size: 0.75em;
             color: var(--text-muted);
         }
 
-        .post-card-excerpt {
-            font-size: 0.85em;
-            color: var(--text-muted);
-            line-height: 1.5;
+        .post-card .tag-pill {
+            font-size: 0.7em;
         }
 
         /* Page heading */
@@ -387,6 +430,10 @@
             header {
                 margin-bottom: 40px;
             }
+
+            .post-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -433,6 +480,7 @@
             html.className = html.className === 'dark' ? 'light' : 'dark';
             localStorage.setItem('theme', html.className);
             updateToggleLabel();
+            if (window.reRenderMermaid) window.reRenderMermaid();
         }
         updateToggleLabel();
     </script>
@@ -508,6 +556,25 @@
         }
 
         renderMermaid();
+
+        // Re-render mermaid diagrams with updated theme
+        window.reRenderMermaid = async function() {
+            const theme = document.documentElement.className;
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: theme === 'dark' ? 'dark' : 'default'
+            });
+            const diagrams = document.querySelectorAll('.mermaid-wrap .mermaid');
+            for (const div of diagrams) {
+                if (div.dataset.source) {
+                    div.removeAttribute('data-processed');
+                    div.innerHTML = '';
+                    div.textContent = div.dataset.source;
+                    div.id = 'mermaid-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+                }
+            }
+            if (diagrams.length > 0) await mermaid.run();
+        };
 
         // Re-render when 11ty hot reload morphs the DOM
         new MutationObserver(() => {
