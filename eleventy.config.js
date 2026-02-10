@@ -12,27 +12,16 @@ module.exports = function (eleventyConfig) {
     "src/posts/**/*.{png,jpg,jpeg,gif,svg,webp}": "blog",
   });
 
-  // Date formatting filter
-  eleventyConfig.addFilter("readableDate", (dateObj) => {
-    return new Date(dateObj).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  });
-
-  // Short date for cards
-  eleventyConfig.addFilter("shortDate", (dateObj) => {
-    return new Date(dateObj).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  });
-
-  // ISO date for machine-readable
-  eleventyConfig.addFilter("isoDate", (dateObj) => {
-    return new Date(dateObj).toISOString();
+  // Date filter: "10th Feb 2026" style
+  eleventyConfig.addFilter("date", (dateObj) => {
+    const d = new Date(dateObj);
+    const day = d.getUTCDate();
+    const suffix =
+      day % 10 === 1 && day !== 11 ? "st" :
+      day % 10 === 2 && day !== 12 ? "nd" :
+      day % 10 === 3 && day !== 13 ? "rd" : "th";
+    const month = d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" });
+    return `${day}${suffix} ${month} ${d.getUTCFullYear()}`;
   });
 
   // Excerpt filter — first paragraph of content
@@ -40,6 +29,18 @@ module.exports = function (eleventyConfig) {
     if (!content) return "";
     const match = content.match(/<p>(.*?)<\/p>/s);
     return match ? match[1].replace(/<[^>]+>/g, "") : "";
+  });
+
+  // Auto-permalink for posts: strip numeric prefix, map to /blog/slug/
+  eleventyConfig.addGlobalData("eleventyComputed.permalink", function () {
+    return function (data) {
+      if (data.permalink) return data.permalink;
+      if (data.tags && data.tags.includes("posts")) {
+        const slug = data.page.fileSlug.replace(/^\d+-/, "");
+        return `/blog/${slug}/`;
+      }
+      return data.permalink;
+    };
   });
 
   // Posts collection sorted by date descending

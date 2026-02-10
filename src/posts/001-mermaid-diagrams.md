@@ -3,7 +3,6 @@ layout: base.njk
 tags: posts
 title: "Mermaid Diagrams Support"
 date: 2025-07-08
-permalink: /blog/mermaid-diagrams/
 ---
 
 This blog now supports Mermaid.js diagrams! Here are some examples:
