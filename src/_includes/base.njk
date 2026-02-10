@@ -93,35 +93,17 @@
         /* Theme toggle */
         .theme-toggle {
             background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            width: 36px;
-            height: 20px;
+            border: none;
             cursor: pointer;
-            position: relative;
-            transition: border-color 0.2s ease;
-            opacity: 0.5;
+            font-family: inherit;
+            font-size: 0.8em;
+            color: var(--text-muted);
+            padding: 0;
+            transition: color 0.2s ease;
         }
 
         .theme-toggle:hover {
-            opacity: 1;
-            border-color: var(--text-muted);
-        }
-
-        .theme-toggle::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 12px;
-            height: 12px;
-            background: var(--text-muted);
-            border-radius: 50%;
-            transition: transform 0.2s ease;
-        }
-
-        .dark .theme-toggle::before {
-            transform: translateX(14px);
+            color: var(--text-heading);
         }
 
         /* Navigation */
@@ -312,7 +294,7 @@
             <a href="/" class="site-title">
                 <span class="prompt">></span> {{ metadata.title }}<span class="cursor">_</span>
             </a>
-            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode"></button>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">[light]</button>
         </header>
 
         <main>
@@ -337,12 +319,17 @@
     </div>
 
     <script>
+        function updateToggleLabel() {
+            const btn = document.querySelector('.theme-toggle');
+            if (btn) btn.textContent = document.documentElement.className === 'dark' ? '[light]' : '[dark]';
+        }
         function toggleTheme() {
             const html = document.documentElement;
-            const newTheme = html.className === 'dark' ? 'light' : 'dark';
-            html.className = newTheme;
-            localStorage.setItem('theme', newTheme);
+            html.className = html.className === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', html.className);
+            updateToggleLabel();
         }
+        updateToggleLabel();
     </script>
 
     <script type="module">
