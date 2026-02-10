@@ -252,10 +252,17 @@
             color: var(--text-muted);
         }
 
+        .post-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
         .post-card-date {
             font-size: 0.8em;
             color: var(--text-muted);
-            margin-bottom: 10px;
         }
 
         .post-card-excerpt {
@@ -283,6 +290,92 @@
             border-top: 1px solid var(--border);
             font-size: 0.8em;
             color: var(--text-muted);
+        }
+
+        /* Mermaid expand */
+        .mermaid-wrap {
+            position: relative;
+        }
+
+        .mermaid-expand {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.7em;
+            padding: 2px 8px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.15s ease, color 0.15s ease;
+        }
+
+        .mermaid-wrap:hover .mermaid-expand {
+            opacity: 1;
+        }
+
+        .mermaid-expand:hover {
+            color: var(--text-heading);
+        }
+
+        .mermaid-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .mermaid-modal {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 48px 32px 32px;
+            width: 90vw;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+            position: relative;
+            overflow: auto;
+        }
+
+        .mermaid-modal .mermaid-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.8em;
+            cursor: pointer;
+            padding: 2px 6px;
+            z-index: 1;
+        }
+
+        .mermaid-modal .mermaid-close:hover {
+            color: var(--text-heading);
+        }
+
+        .mermaid-modal .mermaid {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mermaid-modal .mermaid svg {
+            width: 85vw;
+            height: auto;
+            max-height: 80vh;
         }
 
         /* Responsive */
@@ -356,16 +449,62 @@
 
             const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid');
             mermaidBlocks.forEach((block, index) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'mermaid-wrap';
+
+                const source = block.textContent;
+
                 const mermaidDiv = document.createElement('div');
                 mermaidDiv.className = 'mermaid';
-                mermaidDiv.textContent = block.textContent;
+                mermaidDiv.textContent = source;
                 mermaidDiv.id = 'mermaid-' + Date.now() + '-' + index;
-                block.parentNode.parentNode.replaceChild(mermaidDiv, block.parentNode);
+                mermaidDiv.dataset.source = source;
+
+                const btn = document.createElement('button');
+                btn.className = 'mermaid-expand';
+                btn.textContent = '[expand]';
+                btn.addEventListener('click', () => expandMermaid(mermaidDiv));
+
+                wrap.appendChild(mermaidDiv);
+                wrap.appendChild(btn);
+                block.parentNode.parentNode.replaceChild(wrap, block.parentNode);
             });
 
             if (mermaidBlocks.length > 0) {
                 mermaid.run();
             }
+        }
+
+        async function expandMermaid(srcDiv) {
+            const overlay = document.createElement('div');
+            overlay.className = 'mermaid-modal-overlay';
+
+            const modal = document.createElement('div');
+            modal.className = 'mermaid-modal';
+
+            const close = document.createElement('button');
+            close.className = 'mermaid-close';
+            close.textContent = '[close]';
+
+            const diagram = document.createElement('div');
+            diagram.className = 'mermaid';
+            diagram.id = 'mermaid-modal-' + Date.now();
+
+            diagram.textContent = srcDiv.dataset.source;
+
+            modal.appendChild(close);
+            modal.appendChild(diagram);
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            await mermaid.run({ nodes: [diagram] });
+
+            const dismiss = () => overlay.remove();
+            close.addEventListener('click', dismiss);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+            document.addEventListener('keydown', function esc(e) {
+                if (e.key === 'Escape') { dismiss(); document.removeEventListener('keydown', esc); }
+            });
         }
 
         renderMermaid();
