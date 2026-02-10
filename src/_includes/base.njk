@@ -134,7 +134,7 @@
         .post-content h3 { font-size: 1em; }
 
         .post-content p {
-            margin-bottom: 1.2em;
+            margin-bottom: 2em;
         }
 
         .post-content a {
@@ -149,7 +149,7 @@
         }
 
         .post-content ul, .post-content ol {
-            margin-bottom: 1.2em;
+            margin-bottom: 2em;
             padding-left: 1.5em;
         }
 
@@ -157,13 +157,13 @@
             margin-bottom: 0.3em;
         }
 
-        .post-content pre {
+        .post-content pre, .post-content .mermaid {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 4px;
             padding: 16px;
             overflow-x: auto;
-            margin-bottom: 1.2em;
+            margin-bottom: 2em;
             font-size: 0.9em;
         }
 
@@ -198,9 +198,26 @@
             margin-bottom: 8px;
         }
 
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .post-date {
             font-size: 0.85em;
             color: var(--text-muted);
+        }
+
+        .tag-pill {
+            font-size: 0.75em;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 1px 8px;
+            position: relative;
+            top: -1px;
         }
 
         /* Post grid (homepage) */
@@ -294,7 +311,10 @@
             <article>
                 <div class="post-header">
                     <h1 class="post-title">{{ title }}</h1>
-                    <time class="post-date" datetime="{{ date | date }}">{{ date | date }}</time>
+                    <div class="post-meta">
+                        <time class="post-date" datetime="{{ date | date }}">{{ date | date }}</time>
+                        {%- for tag in tags %}{% if tag != "posts" %}<span class="tag-pill">{{ tag }}</span>{% endif %}{%- endfor %}
+                    </div>
                 </div>
                 <div class="post-content">
                     {{ content | safe }}
@@ -327,24 +347,35 @@
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 
-        const theme = document.documentElement.className;
-        mermaid.initialize({
-            startOnLoad: false,
-            theme: theme === 'dark' ? 'dark' : 'default'
-        });
+        function renderMermaid() {
+            const theme = document.documentElement.className;
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: theme === 'dark' ? 'dark' : 'default'
+            });
 
-        const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid');
-        mermaidBlocks.forEach((block, index) => {
-            const mermaidDiv = document.createElement('div');
-            mermaidDiv.className = 'mermaid';
-            mermaidDiv.textContent = block.textContent;
-            mermaidDiv.id = 'mermaid-diagram-' + index;
-            block.parentNode.parentNode.replaceChild(mermaidDiv, block.parentNode);
-        });
+            const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid');
+            mermaidBlocks.forEach((block, index) => {
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                mermaidDiv.textContent = block.textContent;
+                mermaidDiv.id = 'mermaid-' + Date.now() + '-' + index;
+                block.parentNode.parentNode.replaceChild(mermaidDiv, block.parentNode);
+            });
 
-        if (mermaidBlocks.length > 0) {
-            mermaid.run();
+            if (mermaidBlocks.length > 0) {
+                mermaid.run();
+            }
         }
+
+        renderMermaid();
+
+        // Re-render when 11ty hot reload morphs the DOM
+        new MutationObserver(() => {
+            if (document.querySelector('pre code.language-mermaid')) {
+                renderMermaid();
+            }
+        }).observe(document.querySelector('main'), { childList: true, subtree: true });
     </script>
 </body>
 </html>
