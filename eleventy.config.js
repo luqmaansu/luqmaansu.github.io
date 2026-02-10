@@ -42,10 +42,10 @@ module.exports = function (eleventyConfig) {
     return match ? match[1].replace(/<[^>]+>/g, "") : "";
   });
 
-  // Posts collection: grab all md files in posts/, sorted by date descending
+  // Posts collection sorted by date descending
   eleventyConfig.addCollection("posts", (collectionApi) => {
     return collectionApi
-      .getFilteredByGlob("src/posts/*.md")
+      .getFilteredByTag("posts")
       .sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
   });
 

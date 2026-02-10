@@ -1,5 +1,6 @@
 ---
 layout: base.njk
+tags: posts
 title: "Welcome to Jekyll!"
 date: 2025-07-08
 permalink: /blog/welcome-to-jekyll/

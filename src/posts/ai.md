@@ -1,5 +1,6 @@
 ---
 layout: base.njk
+tags: posts
 title: "AI Everywhere"
 date: 2025-07-08
 permalink: /blog/ai/

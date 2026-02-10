@@ -1,5 +1,6 @@
 ---
 layout: base.njk
+tags: posts
 title: "Mermaid Diagrams Support"
 date: 2025-07-08
 permalink: /blog/mermaid-diagrams/
